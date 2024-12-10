@@ -168,6 +168,7 @@ const Home = ({ navigation }: any) => {
                     titleStyle={{ fontSize: 18, fontWeight: 'bold', color: '#1E1E1E' }}
                     loadingProps={{ size: 28, color: '#1E1E1E' }}
                     title='Iniciar Chamada'
+                    onPress={navigation.navigate('Camera')}
                 />
             </View>
         </View>

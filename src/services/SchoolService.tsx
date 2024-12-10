@@ -2,7 +2,7 @@ import axios from 'axios'
 import { MMKV } from 'react-native-mmkv'
 import { loginService } from '@/services/LoginService'
 
-const storage = new MMKV({ id: `${process.env.EXPO_PUBLIC_ID_MMKV}` })
+const storage = new MMKV({ id: `classtracker` })
 
 class SchoolService {
     readonly saveDailyLessonsInStorage = (lessons: any) => {
@@ -27,11 +27,11 @@ class SchoolService {
     readonly getDailyLessons = async(ra: number) => {
         try {
             const response = await axios.get(
-                `${process.env.EXPO_PUBLIC_JAVA_API_URL}/school/users/${ra}/dailyLessons`, {
+                `http://classtracker.online:8080/api/school/users/${ra}/dailyLessons`, {
                     headers: {
                         'Authorization': `Bearer ${loginService.getBearerTokenFromStorage()}`
                     },
-                    timeout: Number(process.env.EXPO_PUBLIC_API_TIMEOUT)
+                    timeout: 10000
                 })
 
             if(response?.data) {
@@ -66,11 +66,11 @@ class SchoolService {
     readonly getHistory = async(ra: number) => {
         try {
             const response = await axios.get(
-                `${process.env.EXPO_PUBLIC_JAVA_API_URL}/school/users/${ra}/history`, {
+                `http://classtracker.online:8080/api/school/users/${ra}/history`, {
                     headers: {
                         'Authorization': `Bearer ${loginService.getBearerTokenFromStorage()}`
                     },
-                    timeout: Number(process.env.EXPO_PUBLIC_API_TIMEOUT)
+                    timeout: 10000
                 })
 
             if(response?.data) {
@@ -105,11 +105,11 @@ class SchoolService {
     readonly getFaultsStats = async(ra: number) => {
         try {
             const response = await axios.get(
-                `${process.env.EXPO_PUBLIC_JAVA_API_URL}/school/users/${ra}/faults`, {
+                `http://classtracker.online:8080/api/school/users/${ra}/faults`, {
                     headers: {
                         'Authorization': `Bearer ${loginService.getBearerTokenFromStorage()}`
                     },
-                    timeout: Number(process.env.EXPO_PUBLIC_API_TIMEOUT)
+                    timeout: 10000
                 })
 
             if(response?.data) {
