@@ -17,7 +17,6 @@ const FaltsStats = ({navigation}: any) => {
     const {user, setUser} = useUserStore()
     const {
         faultsStats, setFaultsStats,
-        lessonsList, setLessonsList,
         checkedLessonTwo, setCheckedLessonTwo,
         faultsStatsFiltered, setFaultsStatsFiltered
     } = useSchoolStore()
