@@ -3,6 +3,11 @@
     "name": "AI Class Tracker",
     "slug": "AIClassTracker",
     "version": "1.0.0",
+    "extra": {
+      "eas": {
+        "projectId": "4b50edf0-20c8-4ba1-826d-c7e5a83e9bab"
+      }
+    },
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
@@ -29,11 +34,6 @@
           "launchMode": "most-recent"
         }
       ]
-    ],
-    "extra": {
-      "eas": {
-        "projectId": "4b50edf0-20c8-4ba1-826d-c7e5a83e9bab"
-      }
-    }
+    ]
   }
 }
