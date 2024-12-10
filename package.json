@@ -29,7 +29,8 @@
     "react-native-svg": "15.8.0",
     "react-native-vector-icons": "^10.2.0",
     "zustand": "^5.0.2",
-    "expo-splash-screen": "~0.29.16"
+    "expo-splash-screen": "~0.29.16",
+    "expo-navigation-bar": "~4.0.5"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

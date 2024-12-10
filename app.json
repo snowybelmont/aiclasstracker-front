@@ -8,9 +8,13 @@
         "projectId": "4b50edf0-20c8-4ba1-826d-c7e5a83e9bab"
       }
     },
-    "orientation": "portrait",
+    "orientation": "default",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
+    "androidNavigationBar": {
+      "barStyle": "light-content",
+      "backgroundColor": "#663399"
+    },
     "newArchEnabled": true,
     "splash": {
       "image": "./assets/splash-icon.png",
@@ -25,8 +29,14 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#663399"
       },
+      "splash": {
+        "image": "./assets/splash-icon.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#663399"
+      },
       "package": "online.aiclasstracker"
     },
+    "githubUrl": "https://github.com/snowybelmont/aiclasstracker-front",
     "plugins": [
       [
         "expo-dev-launcher",
