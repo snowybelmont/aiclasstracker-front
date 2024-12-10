@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { MMKV } from 'react-native-mmkv'
 
-const storage = new MMKV({ id: `classtracker` })
+const storage = new MMKV({ id: `${process.env.EXPO_PUBLIC_ID_MMKV}` })
 
 class LoginService {
     readonly saveBearerTokenInStorage = (token: string) => {
@@ -43,9 +43,9 @@ class LoginService {
     readonly login = async(email: string, password: string) => {
         try {
             const response = await axios.post(
-            `http://classtracker.online:8080/api/auth/login`,
+            `${process.env.EXPO_PUBLIC_JAVA_API_URL}/auth/login`,
             {email, password},
-            {timeout: 10000}
+            {timeout: Number(process.env.EXPO_PUBLIC_JAVA_API_TIMEOUT)}
             )
 
             if(response?.data && response.data.accessToken) {
@@ -62,12 +62,12 @@ class LoginService {
     readonly checkTokenExists = async() => {
         try {
             const response = await axios.post(
-                `http://classtracker.online:8080/api/auth/checkToken`,
+                `${process.env.EXPO_PUBLIC_JAVA_API_URL}/auth/checkToken`,
                 {
                     headers: {
                         'Authorization': `Bearer ${this.getBearerTokenFromStorage()}`
                     },
-                    timeout: 10000
+                    timeout: Number(process.env.EXPO_PUBLIC_JAVA_API_TIMEOUT)
                 })
 
             if(response?.data && response.data.exists) {
@@ -86,9 +86,9 @@ class LoginService {
                 error.config._retry = true
                 try {
                     const response = await axios.post(
-                    `http://classtracker.online:8080/api/auth/refreshToken`,
+                    `${process.env.EXPO_PUBLIC_JAVA_API_URL}/auth/refreshToken`,
                     {accessToken: this.getBearerTokenFromStorage()},
-                    {timeout: 10000})
+                    {timeout: Number(process.env.EXPO_PUBLIC_JAVA_API_TIMEOUT)})
 
                     if(response?.data) {
                         this.saveBearerTokenInStorage(response.data.refreshToken)
