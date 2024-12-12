@@ -5,9 +5,6 @@ import { StatusBar } from 'expo-status-bar'
 import StackNavigator from '@/routes/Stack'
 import { loginService } from '@/services/LoginService'
 
-SplashScreen.preventAutoHideAsync().then()
-setTimeout(SplashScreen.hideAsync, 5000)
-
 export default function App() {
     loginService.defineInterceptor()
 

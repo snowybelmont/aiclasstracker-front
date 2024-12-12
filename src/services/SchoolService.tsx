@@ -121,6 +121,26 @@ class SchoolService {
         }
         return null
     }
+
+    readonly saveCall = async(professorRa: number, data: {lessonAbr: string, curseAbr: string, day: number, time: string, semester: number, studentsRa: string[]}) => {
+        try {
+            const response = await axios.post(
+                `${process.env.EXPO_PUBLIC_JAVA_API_URL}/school/users/${professorRa}/makeCall`,
+                data, {
+                    headers: {
+                        'Authorization': `Bearer ${loginService.getBearerTokenFromStorage()}`
+                    },
+                    timeout: Number(process.env.EXPO_PUBLIC_JAVA_API_TIMEOUT)
+                })
+
+            if(response?.data) {
+                return response.data
+            }
+        } catch (error) {
+            console.log('Erro ao consumir a api para registrar a chamada: ', error)
+        }
+        return null
+    }
 }
 
 const schoolService = new SchoolService()

@@ -4,6 +4,7 @@ import { schoolService } from '@/services/SchoolService'
 type DailyLessons = {
     room: string,
     time: string,
+    day: number,
     lessonAbr: string,
     semester: number,
     curseAbr: string,

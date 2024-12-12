@@ -140,14 +140,14 @@ const Login = ({ navigation, route }: any) => {
                 title='Entrar'
                 onPress={handleLogin}
             />
-            {error.login && (
+            {error?.login && (
                 <Dialog
                     backdropStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
-                    isVisible={!!error.login}
+                    isVisible={!!error?.login}
                     onBackdropPress={() => setError({})}
                 >
-                    <Dialog.Title title={error.login.title} />
-                    <Text>{error.login.message}</Text>
+                    <Dialog.Title title={error?.login.title} />
+                    <Text>{error?.login.message}</Text>
                     <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
                         <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#3690da', textAlign: 'center', marginEnd: 14 }}
                               onPress={() => setError({})}>
@@ -168,7 +168,7 @@ const Login = ({ navigation, route }: any) => {
             {sessionExpired && (
                 <Dialog
                     backdropStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
-                    isVisible={!!error.login}
+                    isVisible={!!error?.login}
                     onBackdropPress={() => setError({})}
                 >
                     <Dialog.Title title='Sessão expirada' />

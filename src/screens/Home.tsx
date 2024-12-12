@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react'
+import React, {useEffect, useState} from 'react'
 import { getNetworkStateAsync, NetworkState } from 'expo-network'
 import { View, Text } from 'react-native'
 import { Button } from '@rneui/base'
-import { Skeleton } from '@rneui/themed'
+import { Dialog, Skeleton } from '@rneui/themed'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useAuthStore } from '@/store/AuthStore'
 import { useUserStore } from '@/store/UserStore'
@@ -15,6 +15,7 @@ const Home = ({ navigation }: any) => {
     const {isAutenticated, setAuthState} = useAuthStore()
     const {user, setUser} = useUserStore()
     const {dailyLessons, setDailyLessons} = useSchoolStore()
+    const [error, setError] = useState<{validation?: {title: string; message: string}}>({})
 
     useEffect(() => {
         const checkAuthState = async(networkState: NetworkState) => {
@@ -71,6 +72,30 @@ const Home = ({ navigation }: any) => {
                 })
         )
     }, [])
+
+    const checkIsLessonTime = () => {
+        return dailyLessons?.some((item: any) => {
+            const now = new Date('2022-01-01T21:30:00.000Z')
+            const times = item?.time?.split(' - ')
+            const [startHour, startMinutes] = times[0]?.split(':')
+            const [endHour, endMinutes] = times[1]?.split(':')
+
+            const nowMs = now.getTime() % (24 * 60 * 60 * 1000)
+            const startMs = (startHour * 60 * 60 * 1000 + parseInt(startMinutes) * 60 * 1000)
+            const endMs = (endHour * 60 * 60 * 1000 + parseInt(endMinutes) * 60 * 1000)
+
+            return nowMs >= startMs && nowMs <= endMs
+        })
+    }
+
+    const handleStartCall = () => {
+        if(!checkIsLessonTime()) {
+            setError({validation: {title: 'Aula não iniciada', message: `Você esta fora do horário de aula, tente novamente mais tarde`}})
+            return
+        }
+
+        navigation.navigate('Camera')
+    }
 
     return (
         <View style={{ flex: 1, backgroundColor: '#663399', paddingTop: 40, paddingHorizontal: 30 }}>
@@ -161,16 +186,35 @@ const Home = ({ navigation }: any) => {
                     </>
                     )}
             </View>
-            <View style={{ alignItems: 'center' }}>
-                <Button
-                    containerStyle={{ width: '50%' }}
-                    buttonStyle={{ height: 55, borderRadius: 10, backgroundColor: '#58C878' }}
-                    titleStyle={{ fontSize: 18, fontWeight: 'bold', color: '#1E1E1E' }}
-                    loadingProps={{ size: 28, color: '#1E1E1E' }}
-                    title='Iniciar Chamada'
-                    onPress={navigation.navigate('Camera')}
-                />
-            </View>
+            {user?.role == 'P' && (
+                <View style={{ alignItems: 'center' }}>
+                    <Button
+                        containerStyle={{ width: '50%' }}
+                        buttonStyle={{ height: 55, borderRadius: 10, backgroundColor: '#58C878' }}
+                        titleStyle={{ fontSize: 18, fontWeight: 'bold', color: '#1E1E1E' }}
+                        loadingProps={{ size: 28, color: '#1E1E1E' }}
+                        title='Iniciar Chamada'
+                        onPress={handleStartCall}
+                        disabled={dailyLessons?.length === 0}
+                    />
+                </View>
+            )}
+            {error?.validation && (
+                <Dialog
+                    backdropStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
+                    isVisible={!!error?.validation}
+                    onBackdropPress={() => setError({})}
+                >
+                    <Dialog.Title title={error?.validation?.title} />
+                    <Text>{error?.validation?.message}</Text>
+                    <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
+                        <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#3690da', textAlign: 'center', marginEnd: 14, marginTop: 10 }}
+                              onPress={() => setError({})}>
+                            FECHAR
+                        </Text>
+                    </View>
+                </Dialog>
+            )}
         </View>
     )
 }
