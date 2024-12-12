@@ -135,7 +135,7 @@ class CameraService {
         try {
             const dailyLessons = schoolService.getDailyLessonsFromStorage()
             return dailyLessons.find((dailyLesson: any) => {
-                const now = new Date('2022-01-01T21:30:00.000Z').getHours() * 60 + new Date('2022-01-01T21:30:00.000Z').getMinutes()
+                const now = new Date().getHours() * 60 + new Date('2022-01-01T21:30:00.000Z').getMinutes()
                 const [startHour, startMinutes] = dailyLesson.time.split(' - ')[0].split(':').map(Number)
                 const [endHour, endMinutes] = dailyLesson.time.split(' - ')[1].split(':').map(Number)
 

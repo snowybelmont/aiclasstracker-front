@@ -78,7 +78,7 @@ const Home = ({ navigation }: any) => {
 
     const checkIsLessonTime = () => {
         return dailyLessons?.some((item: any) => {
-            const now = new Date('2022-01-01T21:30:00.000Z')
+            const now = new Date()
             const times = item?.time?.split(' - ')
             const [startHour, startMinutes] = times[0]?.split(':')
             const [endHour, endMinutes] = times[1]?.split(':')
@@ -98,6 +98,14 @@ const Home = ({ navigation }: any) => {
         }
 
         navigation.navigate('Camera')
+    }
+
+    const handleSendToFatec = async () => {
+        const response = await schoolService.sendToFatec(user?.ra)
+
+        if(response) {
+            setError({validation: { title: 'Sucesso', message: 'Presenças enviadas com sucesso' }})
+        }
     }
 
     return (
@@ -210,7 +218,7 @@ const Home = ({ navigation }: any) => {
                         titleStyle={{ fontSize: 18, fontWeight: 'bold', color: '#1E1E1E' }}
                         loadingProps={{ size: 28, color: '#1E1E1E' }}
                         title='Enviar chamada para o sistema'
-                        onPress={handleStartCall}
+                        onPress={handleSendToFatec}
                         disabled={!havePendence}
                     />
                 </View>
