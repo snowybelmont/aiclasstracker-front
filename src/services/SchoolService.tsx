@@ -141,6 +141,28 @@ class SchoolService {
         }
         return null
     }
+
+    readonly checkPendences = async(ra: number, dailyLessons: any[]) => {
+        try {
+            const response = await axios.post(
+                `${process.env.EXPO_PUBLIC_JAVA_API_URL}/school/users/${ra}/checkCall`,
+                {
+                    dailyLessons
+                }, {
+                    headers: {
+                        'Authorization': `Bearer ${loginService.getBearerTokenFromStorage()}`
+                    },
+                    timeout: Number(process.env.EXPO_PUBLIC_JAVA_API_TIMEOUT)
+                })
+
+            if(response?.data) {
+                return response.data
+            }
+        } catch (error) {
+            console.log('Erro ao consumir a api para verificar as pendencias: ', error)
+        }
+        return null
+    }
 }
 
 const schoolService = new SchoolService()

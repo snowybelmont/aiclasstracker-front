@@ -14,6 +14,8 @@ type DailyLessons = {
 type History = {
     callDate: string,
     lessonAbr: string,
+    lessonTime: string,
+    period: number,
     classDesc: string,
     curseAbr: string,
     ra: number,
@@ -57,6 +59,8 @@ type SchoolStore = {
     setFaultsStats: (faultsStats: FaultsStats[]) => void,
     faultsStatsFiltered: FaultsStats | undefined,
     setFaultsStatsFiltered: (faultsStats: FaultsStats) => void,
+    indexTab: number,
+    setIndexTab: (index: number) => void,
 }
 
 export const useSchoolStore = create<SchoolStore>((set) => ({
@@ -78,4 +82,6 @@ export const useSchoolStore = create<SchoolStore>((set) => ({
     setFaultsStats: (faultsStats: FaultsStats[]) => set(() => ({ faultsStats: faultsStats })),
     faultsStatsFiltered: undefined,
     setFaultsStatsFiltered: (faultsStats: FaultsStats) => set(() => ({ faultsStatsFiltered: faultsStats })),
+    indexTab: 0,
+    setIndexTab: (index: number) => set(() => ({ indexTab: index }))
 }))

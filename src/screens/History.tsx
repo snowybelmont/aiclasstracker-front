@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { getNetworkStateAsync, NetworkState } from 'expo-network'
 import {View, Text, ScrollView, ActivityIndicator} from 'react-native'
-import { Skeleton, ListItem, Avatar, Dialog, CheckBox } from '@rneui/themed'
+import { Skeleton, ListItem, Avatar, Dialog, CheckBox, Tab, TabView } from '@rneui/themed'
 import { LinearGradient } from 'expo-linear-gradient'
 import { Ionicons } from '@expo/vector-icons'
 import DateTimePicker from '@react-native-community/datetimepicker'
@@ -20,10 +20,22 @@ const History = ({ navigation }: any) => {
         lessonsList, setLessonsList,
         checkedLessonOne, setCheckedLessonOne,
         date, setDate,
-        historyFiltered, setHistoryFiltered
+        historyFiltered, setHistoryFiltered,
+        indexTab,
+        setIndexTab
     } = useSchoolStore()
     const [visibleDialog, setVisibleDialog] = useState(false)
     const [showDatePicker, setShowDatePicker] = useState(false)
+    const [loading, setLoading] = useState(true)
+
+    /*useEffect(() => {
+        setLoading(true)
+        setIndexTab(0)
+        setCheckedLessonOne(1)
+        se
+        setHistory([])
+        setHistoryFiltered([])
+    }, [])*/
 
     useEffect(() => {
         const checkAuthState = async(networkState: NetworkState) => {
@@ -85,7 +97,7 @@ const History = ({ navigation }: any) => {
         getNetworkStateAsync().then(
             (networkState) =>
                 checkAuthState(networkState).then((autenticated) => {
-                    if(autenticated) getUserData(networkState).then((ra) => getHistory(networkState, ra))
+                    if(autenticated) getUserData(networkState).then((ra) => getHistory(networkState, ra)).finally(() => setLoading(false))
                 })
         )
     }, [])
@@ -96,12 +108,31 @@ const History = ({ navigation }: any) => {
         setDate(currentDate)
     }
 
-    useEffect(() => {
+    const updateFiltered = () => {
         setHistoryFiltered(history?.filter((item: any) => {
             const dataApiDate = new Date(item?.callDate)
-            return (history[checkedLessonOne - 1]?.lessonAbr === item?.lessonAbr) && (dataApiDate.getFullYear() === date.getFullYear() && dataApiDate.getMonth() + 1 === date.getMonth() + 1 && dataApiDate.getDate() === date.getDate())
+            const lessonName = history[checkedLessonOne - 1]?.lessonAbr
+
+            if(user?.role === 'A') {
+                return (lessonName === item?.lessonAbr)
+                    && (dataApiDate.getFullYear() === date.getFullYear()
+                        && dataApiDate.getMonth() + 1 === date.getMonth() + 1
+                        && dataApiDate.getDate() === date.getDate())
+            } else {
+                return (lessonName === item?.lessonAbr)
+                    && (dataApiDate.getFullYear() === date.getFullYear()
+                        && dataApiDate.getMonth() + 1 === date.getMonth() + 1
+                        && dataApiDate.getDate() === date.getDate())
+                    && (item?.period == indexTab)
+            }
         }))
-    }, [date, visibleDialog])
+
+        console.log()
+    }
+
+    useEffect(() => {
+        updateFiltered()
+    }, [date, visibleDialog, history, indexTab])
 
     return (
         <View style={{ flex: 1, backgroundColor: '#663399', paddingTop: 40, paddingHorizontal: 30 }}>
@@ -136,16 +167,52 @@ const History = ({ navigation }: any) => {
                     height='90%'
                 />
             ) : historyFiltered?.length == 0 ? (
-                <Text style={{fontSize: 16, fontWeight: 'bold', color: '#fff', marginTop: 20}}>
-                    {user?.role == 'P' ? 'Nenhuma chamada encontrada' : 'Nenhuma presença encontrada'}
-                </Text>
+                <>
+                    {user?.role == 'P' && (
+                        <View style={{ height: 50 }}>
+                            <Tab value={indexTab} onChange={(e) => setIndexTab(e)}
+                                 indicatorStyle={{backgroundColor: '#58C878', height: 3,}}>
+                                <Tab.Item
+                                    title="1º Periodo"
+                                    titleStyle={{color: '#fff', fontSize: 12}}
+                                    icon={{name: 'time', type: 'ionicon', color: 'white'}} />
+                                <Tab.Item
+                                    title="2º Periodo"
+                                    titleStyle={{color: '#fff', fontSize: 12}}
+                                    icon={{name: 'time', type: 'ionicon', color: 'white'}}/>
+                            </Tab>
+                            <TabView value={indexTab} onChange={setIndexTab} animationType="spring">
+                            </TabView>
+                        </View>
+                    )}
+                    <Text style={{fontSize: 16, fontWeight: 'bold', color: '#fff', marginTop: 20}}>
+                        {user?.role == 'P' ? 'Nenhuma chamada encontrada' : 'Nenhuma presença encontrada'}
+                    </Text>
+                </>
             ) : (
                 <>
+                    {user?.role == 'P' && (
+                        <>
+                            <Tab value={indexTab} onChange={(e) => setIndexTab(e)}
+                               indicatorStyle={{backgroundColor: '#58C878', height: 3,}}>
+                                <Tab.Item
+                                    title="1º Periodo"
+                                    titleStyle={{color: '#fff', fontSize: 12}}
+                                    icon={{name: 'time', type: 'ionicon', color: 'white'}} />
+                                <Tab.Item
+                                    title="2º Periodo"
+                                    titleStyle={{color: '#fff', fontSize: 12}}
+                                    icon={{name: 'time', type: 'ionicon', color: 'white'}}/>
+                            </Tab>
+                            <TabView value={indexTab} onChange={setIndexTab} animationType="spring">
+                            </TabView>
+                        </>
+                    )}
                     <View style={{ flexDirection: 'row', borderBottomWidth: 2, borderBottomColor: '#ddd', justifyContent: 'space-between', paddingBottom: 10, paddingEnd: 10 }}>
                         <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#fff' }}>{user?.role == 'P' ? 'Lista de Alunos' : 'Lista de Aulas'}</Text>
                         <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#fff' }}>Presente</Text>
                     </View>
-                    <View style={{ height: '86%', marginTop: 10 }}>
+                    <View style={{ height: '76%', marginTop: 10 }}>
                         <ScrollView>
                             {historyFiltered?.map((hist, index: number) => {
                                 const dateHist = new Date(hist?.callDate)
@@ -234,6 +301,15 @@ const History = ({ navigation }: any) => {
                     display='default'
                     onChange={onChange}
                 />
+            )}
+            {loading && (
+                <Dialog
+                    backdropStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
+                    overlayStyle={{ height: '15%', justifyContent: 'center' }}
+                    isVisible={loading}
+                >
+                    <ActivityIndicator size='large' color='#1E1E1E' />
+                </Dialog>
             )}
         </View>
     )

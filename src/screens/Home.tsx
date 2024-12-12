@@ -16,6 +16,7 @@ const Home = ({ navigation }: any) => {
     const {user, setUser} = useUserStore()
     const {dailyLessons, setDailyLessons} = useSchoolStore()
     const [error, setError] = useState<{validation?: {title: string; message: string}}>({})
+    const [havePendence, setHavePendence] = useState<boolean>(false)
 
     useEffect(() => {
         const checkAuthState = async(networkState: NetworkState) => {
@@ -59,7 +60,9 @@ const Home = ({ navigation }: any) => {
             const dailyLessonsData = dataApi || dailyLessons
 
             if (dailyLessonsData) {
-                setDailyLessons(dailyLessonsData.filter((item: any) => item.day = new Date().getDay()))
+                const data = await schoolService.checkPendences(ra, dailyLessonsData?.filter((item: any) => item.day = new Date().getDay()))
+                setDailyLessons(dailyLessonsData?.filter((item: any) => item.day = new Date().getDay()))
+                setHavePendence(data?.havePendencies)
             } else {
                 setDailyLessons([])
             }
@@ -189,13 +192,26 @@ const Home = ({ navigation }: any) => {
             {user?.role == 'P' && (
                 <View style={{ alignItems: 'center' }}>
                     <Button
-                        containerStyle={{ width: '50%' }}
+                        containerStyle={{ width: '50%', marginBottom: 20 }}
                         buttonStyle={{ height: 55, borderRadius: 10, backgroundColor: '#58C878' }}
                         titleStyle={{ fontSize: 18, fontWeight: 'bold', color: '#1E1E1E' }}
                         loadingProps={{ size: 28, color: '#1E1E1E' }}
                         title='Iniciar Chamada'
                         onPress={handleStartCall}
                         disabled={dailyLessons?.length === 0}
+                    />
+                </View>
+            )}
+            {(user?.role == 'P' && havePendence) && (
+                <View style={{ alignItems: 'center' }}>
+                    <Button
+                        containerStyle={{ width: '50%' }}
+                        buttonStyle={{ height: 65, borderRadius: 10, backgroundColor: '#58C878' }}
+                        titleStyle={{ fontSize: 18, fontWeight: 'bold', color: '#1E1E1E' }}
+                        loadingProps={{ size: 28, color: '#1E1E1E' }}
+                        title='Enviar chamada para o sistema'
+                        onPress={handleStartCall}
+                        disabled={!havePendence}
                     />
                 </View>
             )}

@@ -60,7 +60,7 @@ const Login = ({ navigation, route }: any) => {
                 if(accessToken) {
                     await userService.getUser()
                     setAuthState(true)
-                    navigation.reset({index: 0, routes: [{name: 'Tabs'}]})
+                    setTimeout(() => navigation.reset({index: 0, routes: [{name: 'Tabs'}]}, 1000))
                 }
 
                 setError({login: {title: 'Erro ao realizar login', message: 'Um erro inesperado aconteceu. Tente novamente mais tarde'}})

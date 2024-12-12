@@ -25,6 +25,10 @@ const FaltsStats = ({navigation}: any) => {
     const [selectedPart, setSelectedPart] = useState(null)
 
     useEffect(() => {
+        setFaultsStatsFiltered(undefined)
+    }, [])
+
+    useEffect(() => {
         const checkAuthState = async(networkState: NetworkState) => {
             let tokenExists = true
             if(networkState.isConnected && isAutenticated) {
@@ -68,14 +72,6 @@ const FaltsStats = ({navigation}: any) => {
             if (faultsData) {
                 setFaultsStats(faultsData)
                 setFaultsStatsFiltered(faultsData[checkedLessonTwo - 1])
-
-                const faltsPercent = faultsData[checkedLessonTwo - 1].percentFalts ? faultsData[checkedLessonTwo - 1].percentFalts : 0.0
-                const presentPercent = 100.0 - faltsPercent
-
-                setPieData([
-                    { value: presentPercent, color: '#58C878', text: `${presentPercent}%`, type: 'p' },
-                    { value: faltsPercent, color: '#ed1919', text: `${faltsPercent}%`, type: 'f' }
-                ])
             }
         }
 
@@ -98,9 +94,17 @@ const FaltsStats = ({navigation}: any) => {
 
     useEffect(() => {
         setFaultsStatsFiltered(faultsStats?.filter((item: any) => {
+            const faltsPercent = faultsStats[checkedLessonTwo - 1].percentFalts ? faultsStats[checkedLessonTwo - 1].percentFalts : 0.0
+            const presentPercent = 100.0 - faltsPercent
+
+            setPieData([
+                { value: presentPercent, color: '#58C878', text: `${presentPercent}%`, type: 'p' },
+                { value: faltsPercent, color: '#ed1919', text: `${faltsPercent}%`, type: 'f' }
+            ])
+
             return (faultsStats[checkedLessonTwo - 1]?.lessonAbr === item?.lessonAbr)
         })[0])
-    }, [visibleDialog])
+    }, [visibleDialog, faultsStatsFiltered])
 
     return (
         <View style={{ flex: 1, backgroundColor: '#663399' }}>
