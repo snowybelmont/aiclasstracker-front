@@ -8,10 +8,10 @@ import { useUserStore } from '@/store/UserStore'
 
 const Camera = ({navigation}: any) => {
     const cameraRef = useRef<RNVCamera>(null)
-    const device = useCameraDevice('front')
+    const device = useCameraDevice('back')
     const { hasPermission, requestPermission } = useCameraPermission()
     const format = useCameraFormat(device, [
-        { photoResolution: { width: 720, height: 1280 } }
+        { photoResolution: { width: 1080, height: 1920 } }
     ])
     const {user} = useUserStore()
     const [error, setError] = useState<{validation?: {title: string; message: string}}>({})
@@ -94,7 +94,7 @@ const Camera = ({navigation}: any) => {
             const notFoundMessage = responseSearch?.searchNotFound == 0 ? '' : `${responseSearch?.searchNotFound} alunos não foram encontrados\n`
             const alredySavedMessage = responseSave?.facesAlredySaved == 0 ? '' : `${responseSave?.facesAlredySaved} alunos já tiveram a presença registrada\n`
 
-            setResponse(detectedMessage + sucessMessage + erroeMessage + notFoundMessage + alredySavedMessage)
+            setResponse({validation: {title: 'Sucesso', message: `${detectedMessage + sucessMessage + erroeMessage + notFoundMessage + alredySavedMessage}`}})
         } catch (error) {
             console.log('Erro ao processar a foto tirada: ', error)
             setError({validation: {title: 'Erro ao processar a foto tirada', message: 'Ocorreu um erro ao processar a foto tirada, tente novamente mais tarde'}})

@@ -37,15 +37,6 @@ class CameraService {
 
     readonly sendPhotoToDetectFaces = async(photoPath: string) => {
         try {
-            /*
-            await faceService.deleteCollection('6semesterGTI-29-11-2024')
-            await faceService.deleteCollection('NEGELETRONIC6semesterGTI-29-11-2024')
-            await faceService.deleteCollection('PROJTIII6semesterGTI-29-11-2024')
-            await faceService.deleteCollection('TOPAVANCEMTI6semesterGTI-11-12-2024')
-            console.log(await faceService.listCollections())
-
-            return null*/
-
             const imageBytes = await this.convertImagemToBuffer(photoPath)
 
             if(imageBytes == undefined) {
@@ -103,7 +94,15 @@ class CameraService {
         for(const faceBase64 of facesBase64) {
             try {
                 const resizedImageBytes = B.from(faceBase64, 'base64')
-                const facesFound = await faceService.searchFaceByImage(process.env.EXPO_PUBLIC_AWS_STORAGE_COLLECTION_ID, resizedImageBytes)
+                let facesFound
+
+                try {
+                    facesFound = await faceService.searchFaceByImage(process.env.EXPO_PUBLIC_AWS_STORAGE_COLLECTION_ID, resizedImageBytes)
+                } catch (error) {
+                    console.log('Erro ao procurar rostos: ', error)
+                    searchError++
+                    continue
+                }
 
                 if (facesFound == null || !facesFound.FaceMatches || facesFound?.FaceMatches?.length == 0) {
                     searchNotFound++
@@ -135,7 +134,7 @@ class CameraService {
         try {
             const dailyLessons = schoolService.getDailyLessonsFromStorage()
             return dailyLessons.find((dailyLesson: any) => {
-                const now = new Date().getHours() * 60 + new Date('2022-01-01T21:30:00.000Z').getMinutes()
+                const now = new Date().getHours() * 60 + new Date().getMinutes()
                 const [startHour, startMinutes] = dailyLesson.time.split(' - ')[0].split(':').map(Number)
                 const [endHour, endMinutes] = dailyLesson.time.split(' - ')[1].split(':').map(Number)
 
@@ -217,7 +216,7 @@ class CameraService {
 
                     if (studentAlredyRegistered) {
                         studentsAlredySaved.push(face?.Face?.ExternalImageId)
-                        faceAlredySaved++
+                        facesAlredySaved++
                         continue
                     }
 

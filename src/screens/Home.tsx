@@ -16,7 +16,6 @@ const Home = ({ navigation }: any) => {
     const {user, setUser} = useUserStore()
     const {dailyLessons, setDailyLessons} = useSchoolStore()
     const [error, setError] = useState<{validation?: {title: string; message: string}}>({})
-    const [havePendence, setHavePendence] = useState<boolean>(false)
 
     useEffect(() => {
         const checkAuthState = async(networkState: NetworkState) => {
@@ -60,9 +59,7 @@ const Home = ({ navigation }: any) => {
             const dailyLessonsData = dataApi || dailyLessons
 
             if (dailyLessonsData) {
-                const data = await schoolService.checkPendences(ra, dailyLessonsData?.filter((item: any) => item.day = new Date().getDay()))
                 setDailyLessons(dailyLessonsData?.filter((item: any) => item.day = new Date().getDay()))
-                setHavePendence(data?.havePendencies)
             } else {
                 setDailyLessons([])
             }
@@ -210,7 +207,7 @@ const Home = ({ navigation }: any) => {
                     />
                 </View>
             )}
-            {(user?.role == 'P' && havePendence) && (
+            {(user?.role == 'P') && (
                 <View style={{ alignItems: 'center' }}>
                     <Button
                         containerStyle={{ width: '50%' }}
@@ -219,7 +216,7 @@ const Home = ({ navigation }: any) => {
                         loadingProps={{ size: 28, color: '#1E1E1E' }}
                         title='Enviar chamada para o sistema'
                         onPress={handleSendToFatec}
-                        disabled={!havePendence}
+                        disabled={false}
                     />
                 </View>
             )}
